@@ -1,0 +1,14 @@
+# configure postgres db
+services:
+  database:
+    image: "postgres:latest"
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: default_database
+
+    # switch to this once we got it hooked up on the server
+    #env_file:
+    #  - .env
