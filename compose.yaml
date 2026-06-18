@@ -1,0 +1,3 @@
+# main compose file to utlize all the other ones
+include:
+  - ../palm/palm-backend/compose.yaml
