@@ -6,7 +6,7 @@ COPY . .
 
 RUN cargo build --release
 
-FROM alpine:slim
+FROM debian:latest
 
 WORKDIR /usr/local/bin
 

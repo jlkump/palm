@@ -8,3 +8,12 @@ pub mod db {
         pub salted_pass: String,
     }
 }
+
+pub mod intermediate {
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct UserCreation {
+
+    }
+}

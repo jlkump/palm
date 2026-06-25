@@ -1,3 +1,7 @@
+networks:
+  palm-backend:
+    external: false
+
 services:
   db:
     image: "postgres:14"
@@ -13,7 +17,7 @@ services:
     #env_file:
     #  - .env
     networks:
-      - palm_backend
+      - palm-backend
 
   rust:
     container_name: rust
