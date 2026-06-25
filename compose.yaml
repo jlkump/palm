@@ -1,0 +1,31 @@
+networks:
+  palm-backend:
+    external: false
+
+services:
+  db:
+    image: "postgres:14"
+
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: default_database
+
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    # switch to this once we got it hooked up on the server
+    #env_file:
+    #  - .env
+    networks:
+      - palm-backend
+
+  rust:
+    container_name: rust
+    image: rust:slim
+    build:
+      context: ./palm-backend/
+      dockerfile: rust.dockerfile
+    depends_on:
+      - db
+    networks:
+      - palm-backend
