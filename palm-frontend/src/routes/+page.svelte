@@ -1,2 +1,11 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+    import Titlebar from "$lib/components/Titlebar.svelte";
+    import Page from "$lib/components/Page.svelte";
+    import LoginPrompt from "$lib/components/LoginPrompt.svelte";
+</script>
+
+<Titlebar />
+<Page>
+
+    <LoginPrompt />
+</Page>
