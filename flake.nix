@@ -37,7 +37,6 @@
           )
           pkgs.postgresql
         ];
-
         CARGO_HOME = "../.cargo/";
       };
     };
