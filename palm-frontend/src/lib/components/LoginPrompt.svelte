@@ -38,8 +38,6 @@
 <!-- Style starter code comes from https://codefronts.com/components/css-login-forms/floating-label-login/ -->
 <style>
     form {
-        --accent: oklch(35.135% 0.00138 198.686);
-        --accent-button: oklch(15.434% 0.00002 271.152);
         --field-h: 56px;
         display: flex;
         flex-direction: column;

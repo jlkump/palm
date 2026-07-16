@@ -6,6 +6,8 @@
     :global(body) {
 		margin: 0;
         background-color: #f2f5f7;
+        --accent: oklch(35.135% 0.00138 198.686);
+        --accent-button: oklch(15.434% 0.00002 271.152);
 	}
 
     .page {
