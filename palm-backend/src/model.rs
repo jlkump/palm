@@ -26,7 +26,9 @@ pub mod db {
 }
 
 pub mod intermediate {
-    use serde::{Deserialize, Serialize};
+
+
+use serde::{Deserialize, Serialize};
 
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct UserCreation {
