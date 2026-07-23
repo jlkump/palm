@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { children } = $props();
+  let { children, style = "" } = $props();
 </script>
 
 <style>
@@ -25,6 +25,6 @@
 
 </style>
 
-<div class="widget">
+<div class="widget" style={style}>
     {@render children()}
 </div>

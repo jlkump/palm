@@ -147,7 +147,7 @@
     }
 
     .error {
-        color: rgb(192, 25, 42);
+        color: var(--error);
         font-size: small;
     }
 
