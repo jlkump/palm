@@ -30,7 +30,7 @@ pub mod intermediate {
 
 use serde::{Deserialize, Serialize};
 
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct UserCreation {
         pub email: String,
         pub first_name: String,
@@ -38,7 +38,7 @@ use serde::{Deserialize, Serialize};
         pub password: String,
     }
 
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct UserSync {
         pub service_user_id: String,
         pub email: String,
@@ -48,7 +48,7 @@ use serde::{Deserialize, Serialize};
         pub archived: bool,
     }
 
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct UserDelete {
         pub service_user_id: String,
     }
