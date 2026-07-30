@@ -101,8 +101,8 @@
         </div></a>
         <!-- TODO: Only when logged-in. Also, check if admin is active. -->
         <nav class="header-navigation">
-			<a href="#">Admin</a>
-			<a href="#">Profile</a>
+			<a href="/admin">Admin</a>
+			<a href="/profile">Profile</a>
 		</nav>
     </div>
 </header>
