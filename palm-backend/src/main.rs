@@ -1,14 +1,20 @@
-mod postgresql;
-mod model;
+use axum::{Router, routing::{get, post}};
+use palm_backend::route;
 
-use palm_backend::model::intermediate::UserCreation;
-use postgres::{Client, NoTls};
-use crate::model::service::Service;
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/healthcheck", get(|| async { "Feeling good!" }))
+        // Authentication
+        .route("/api/auth/login", post(route::create_user))
+        .route("/api/auth/logout", post(route::create_user))
+        // User management
+        .route("/api/user/create", post(route::create_user))
+        .route("/api/user/{user_id}", get(route::create_user))
+        .route("/api/user/{user_id}/sync", post(route::create_user))
+        .route("/api/user/{user_id}/sync/{service_name}", post(route::create_user))
+        .route("/api/user/{user_id}/delete", post(route::create_user));
 
-fn main() {
-    //Change host and user to what they need to be
-    let mut postgres_client = Client::connect("host=localhost user=postgres", NoTls).unwrap_or_else(|e| panic!("{e}: Error connecting to Postgresql database"));
-    
-    //Examples
-    //postgres_client.create_user(&UserCreation::default());
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }

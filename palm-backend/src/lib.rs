@@ -1,3 +1,3 @@
-pub mod model;
-pub mod postgresql;
-
+pub mod database;
+pub mod route;
+pub mod service;
