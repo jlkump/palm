@@ -1,8 +1,11 @@
-use axum::{Router, routing::{delete, get, post}};
+use axum::{Router, routing::{delete, get, post, put}};
 use palm_backend::route;
 
 #[tokio::main]
 async fn main() {
+    // Difference between PUT & POST
+    //  - PUT is idempotent (same result each time it is requested)
+    //  - POST is not. It may fail if it is called a second time with the same info to prevent duplication.
     let app = Router::new()
         .route("/healthcheck", get(|| async { "Feeling good!" }))
         // Authentication
@@ -11,25 +14,25 @@ async fn main() {
         // User management
         // Create a user
         .route("/api/user/create", post(route::create_user))
+        // Update palm user info, sync across all services when possible
+        .route("/api/user/{user_id}", put(route::update_user))
         // Get user info
         // - What services they have
         // - Their profile info
-        .route("/api/user/{user_id}", get(route::create_user))
-        // Sync all user services
-        .route("/api/user/{user_id}/sync", post(route::create_user))
-        // Sync specific user service
-        .route("/api/user/{user_id}/sync/{service_name}", post(route::create_user))
-        // Post to create service for a user
-        .route("/api/user/{user_id}/{service_name}", post(route::create_user))
+        .route("/api/user/{user_id}", get(route::get_user))
+        // Create service for a user
+        .route("/api/user/{user_id}/{service_name}", post(route::create_user_service))
+        // Sync user service
+        .route("/api/user/{user_id}/{service_name}", put(route::sync_user_service))
         // Get to get info on a service for a user
-        .route("/api/user/{user_id}/{service_name}", get(route::create_user))
+        .route("/api/user/{user_id}/{service_name}", get(route::get_user_service))
         // Delete a user's service
-        .route("/api/user/{user_id}/{service_name}", delete(route::create_user))
+        .route("/api/user/{user_id}/{service_name}", delete(route::delete_user_service))
         // Delete a user
-        .route("/api/user/{user_id}/delete", delete(route::create_user))
+        .route("/api/user/{user_id}/delete", delete(route::delete_user))
         // Get all services available
         // - with service info, include link to service
-        .route("/api/services", get(route::create_user));
+        .route("/api/services", get(route::get_services));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();

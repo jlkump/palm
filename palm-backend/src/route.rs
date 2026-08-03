@@ -1,6 +1,13 @@
-use axum::{Json, response::Response};
+/// Every API endpoint in our backend (as defined in the main function)
+/// points to a function in this file.
+/// 
+/// NOTE:
+///   For the future, it may make sense to break up these functions across different files
+///   if this file gets too large.
+use axum::{Json, extract::Path, response::Response};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -21,16 +28,32 @@ pub struct UserCreation {
 /// 
 /// The creation only fails as a whole if the Palm user can not be created.
 pub async fn create_user(Json(payload): Json<UserCreation>) -> Json<UserCreation> {
-    // First attempt creation of the Palm user
+    // First attempt creation of the Palm user in our Postgres database
     //      Return any error codes
 
-    // Then, attempt creation across all the services.
+    // Then, attempt creation across all the services requested
+
+    // Record all services that failed some number of attempts
+    // Return the error codes
+    // Front-end will have to handle failures
     
     Json(payload)
 }
 
-pub async fn create_user_service() {
+pub async fn update_user(Path(user_id): Path<Uuid>) {
+    todo!()
+}
 
+pub async fn get_user(Path(user_id): Path<Uuid>) {
+    todo!()
+}
+
+pub async fn create_user_service(Path((user_id, service_name)): Path<(Uuid, String)>) {
+    todo!()
+}
+
+pub async fn get_user_service(Path((user_id, service_name)): Path<(Uuid, String)>) {
+    todo!()
 }
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -44,11 +67,31 @@ pub struct UserSync {
     pub archived: bool,
 }
 
-pub async fn sync_user_service(Json(payload): Json<UserSync>) -> Json<UserSync> {
+pub async fn sync_user_service(
+    Path((user_id, service_name)): Path<(Uuid, String)>,
+    Json(payload): Json<UserSync>
+) -> Json<UserSync> {
     Json(payload)
 }
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct UserDelete {
     pub service_user_id: String,
+}
+
+pub async fn delete_user_service(
+    Path((user_id, service_name)): Path<(Uuid, String)>,
+    Json(payload): Json<UserDelete>
+) {
+    todo!()
+}
+
+pub async fn delete_user(
+    Path(user_id): Path<Uuid>
+) {
+    todo!()
+}
+
+pub async fn get_services() {
+
 }

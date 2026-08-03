@@ -2,6 +2,8 @@ use postgres::Client;
 
 use serde::{Deserialize, Serialize};
 
+use crate::route::{UserCreation, UserDelete, UserSync};
+
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {
     pub email: String,
@@ -10,9 +12,14 @@ pub struct User {
     pub password_hash_salt: String,
 }
 
-// TODO: Should initialize database also handling connecting to the database and returning that connection channel?
+// NOTE:
+//   Should we just pass in the database credentials instead and have this method return the Client connection?
+//   Either way, Database client is initialized in main, before starting up the API listeners.
 pub async fn initialize_database(client: &mut Client) {
-    // NOTE: Is this the best way to initialize the database?
+    // Question:
+    //   Is this the best way to initialize the database?
+    //   I think there is a way to simply have a database startup with a schema.
+    // - Landon
     client.execute("
         CREATE TABLE Users (
             user_id             INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -57,34 +64,25 @@ pub async fn initialize_database(client: &mut Client) {
     ", &[]).expect("Failed to initialize database");
 }
 
-// use crate::service::Service;
+// TODO: Properly error handle rather than use unwraps
+pub async fn create_user(client: &mut Client, info: &UserCreation) {
+    client.execute("
+        INSERT INTO Users (email, first_name, last_name, pass) 
+        VALUES ($1, $2, $3, $4);
+    ", &[&info.email, &info.first_name, &info.last_name, &info.password]).unwrap();
+}
 
-// impl Service for Client {
-//     fn create_user(&mut self, info: &crate::model::intermediate::UserCreation) -> impl Future {
-//         async {
-//             self.execute("
-//                 INSERT INTO Users (email, first_name, last_name, pass)
-//                 VALUES ($1, $2, $3, $4);
-//             ", &[&info.email, &info.first_name, &info.last_name, &info.password])
-//         }
-//     }
+pub async fn sync_user(client: &mut Client, info: &UserSync) {
+    client.execute("
+        UPDATE Users
+        SET  email = $1, first_name = $2, last_name = $3, pass = $4, archived = $5, 
+        WHERE user_id = $6
+    ", &[&info.email, &info.first_name, &info.last_name, &info.password, &Box::new(info.archived), &info.service_user_id]).unwrap();
+}
 
-//     fn sync_user(&mut self, info: &crate::model::intermediate::UserSync) -> impl Future {
-//         async {
-//             self.execute("
-//                 UPDATE Users
-//                 SET  email = $1, first_name = $2, last_name = $3, pass = $4, archived = $5, 
-//                 WHERE user_id = $6
-//             ", &[&info.email, &info.first_name, &info.last_name, &info.password, &Box::new(info.archived), &info.service_user_id])
-//         }
-//     }
-
-//     fn remove_user(&mut self, info: &crate::model::intermediate::UserDelete)  -> impl Future {
-//         async {
-//             self.execute("
-//                 DELETE FROM Users
-//                 WHERE $1
-//             ", &[&info.service_user_id])
-//         }
-//     }
-// }
+pub async fn remove_user(client: &mut Client, info: &UserDelete) {
+    client.execute("
+        DELETE FROM Users
+        WHERE $1
+    ", &[&info.service_user_id]).unwrap();
+}

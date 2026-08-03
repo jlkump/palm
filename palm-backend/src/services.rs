@@ -1,7 +1,3 @@
-use std::collections::HashMap;
-
-use postgres::Client;
-
 use crate::route::{UserCreation, UserDelete, UserSync};
 
 mod forgejo;
@@ -24,22 +20,19 @@ impl Service {
             Service::Forgejo => forgejo::create_user(data).await,
             Service::Taiga => taiga::create_user(data).await,
         }
-        todo!()
     }
 
     pub async fn delete_user(&self, data: UserDelete) {
-        todo!()
+        match self {
+            Service::Forgejo => forgejo::delete_user(data).await,
+            Service::Taiga => taiga::delete_user(data).await,
+        }
     }
 
     pub async fn sync_user(&self, data: UserSync) {
-        todo!()
+        match self {
+            Service::Forgejo => forgejo::sync_user(data).await,
+            Service::Taiga => taiga::sync_user(data).await,
+        }
     }
-}
-
-/// This is run when the backend starts up.
-/// 
-/// Ensures the creation of all services in the database.
-/// Gets the data mapping from name to service info and handlers.
-pub async fn create_service_list(db: &mut Client) -> HashMap<String, Service> {
-    todo!()
 }
