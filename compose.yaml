@@ -9,10 +9,11 @@ services:
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: default_database
+      POSTGRES_DB: palm
 
     volumes:
       - ./postgres:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     # switch to this once we got it hooked up on the server
     #env_file:
     #  - .env
@@ -28,7 +29,7 @@ services:
       context: ./palm-backend/
       dockerfile: rust.dockerfile
     environment:
-      DATABASE_CREDS: postgres://username:password@db:5432/default_database
+      DATABASE_CREDS: postgres://username:password@db:5432/palm
     ports:
       - "9000:3000"
     depends_on:

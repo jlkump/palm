@@ -1,3 +1,5 @@
+\c palm
+
 CREATE TABLE Users (
     user_id             INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     email               TEXT NOT NULL,

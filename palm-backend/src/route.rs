@@ -1,13 +1,16 @@
+use std::sync::Arc;
+
 /// Every API endpoint in our backend (as defined in the main function)
 /// points to a function in this file.
 /// 
 /// NOTE:
 ///   For the future, it may make sense to break up these functions across different files
 ///   if this file gets too large.
-use axum::{Json, extract::Path, response::Response};
-use reqwest::StatusCode;
+use axum::{Json, extract::{Path, State}};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+
+use crate::{AppState, database};
 
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -27,17 +30,19 @@ pub struct UserCreation {
 /// we skip it and make sure to communicate which services were successful in registration.
 /// 
 /// The creation only fails as a whole if the Palm user can not be created.
-pub async fn create_user(Json(payload): Json<UserCreation>) -> Json<UserCreation> {
+pub async fn create_user(
+    State(state): State<Arc<AppState>>,
+    Json(payload): Json<UserCreation>,
+) {
     // First attempt creation of the Palm user in our Postgres database
     //      Return any error codes
+    database::create_user(&state.db_pool, &payload).await;
 
     // Then, attempt creation across all the services requested
 
     // Record all services that failed some number of attempts
     // Return the error codes
     // Front-end will have to handle failures
-    
-    Json(payload)
 }
 
 pub async fn update_user(Path(user_id): Path<Uuid>) {
