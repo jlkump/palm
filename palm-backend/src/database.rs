@@ -20,24 +20,22 @@ impl FromRow<'_, PgRow> for User {
 }
 
 // TODO: Properly error handle rather than use unwraps
-pub async fn create_user(client: &PgPool, info: &UserCreation) {
+pub async fn create_user(client: &PgPool, info: &UserCreation) -> Result<(), sqlx::Error>{
     // TODO: Password hash and salt
-    sqlx::query("
-        INSERT INTO Users (email, first_name, last_name, pass) 
-        VALUES ($1, $2, $3, $4);
-    ")
+    sqlx::query("INSERT INTO Users (email, first_name, last_name, password_hash, date_pass_modified) VALUES ($1, $2, $3, $4, NOW());")
     .bind(&info.email).bind(&info.first_name).bind(&info.last_name).bind(&info.password)
-    .execute(client).await.unwrap();
+    .execute(client)
+    .await.map(|_| ())
 }
 
 pub async fn get_users(client: &PgPool) -> Vec<User> {
-    sqlx::query_as("SELECT (email, first_name, last_name, pass) FROM Users;").fetch_all(client).await.unwrap()
+    sqlx::query_as("SELECT email, first_name, last_name, password_hash FROM Users;").fetch_all(client).await.unwrap()
 }
 
 pub async fn sync_user(client: &PgPool, info: &UserSync) {
     sqlx::query("
         UPDATE Users
-        SET  email = $1, first_name = $2, last_name = $3, pass = $4, archived = $5, 
+        SET  email = $1, first_name = $2, last_name = $3, password_hash = $4, archived = $5 
         WHERE user_id = $6
     ")
     .bind(&info.email).bind(&info.first_name).bind(&info.last_name).bind(&info.password)
@@ -49,6 +47,6 @@ pub async fn sync_user(client: &PgPool, info: &UserSync) {
 pub async fn remove_user(client: &PgPool, info: &UserDelete) {
     sqlx::query("
         DELETE FROM Users
-        WHERE $1
+        WHERE user_id = $1
     ").bind(&info.service_user_id).execute(client).await.unwrap();
 }

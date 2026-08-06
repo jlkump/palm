@@ -10,7 +10,7 @@ use axum::{Json, extract::{Path, State}};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{AppState, database};
+use crate::{AppState, database::{self, User}};
 
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -33,10 +33,13 @@ pub struct UserCreation {
 pub async fn create_user(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<UserCreation>,
-) {
+) -> String {
     // First attempt creation of the Palm user in our Postgres database
     //      Return any error codes
-    database::create_user(&state.db_pool, &payload).await;
+    match database::create_user(&state.db_pool, &payload).await {
+        Ok(_) => "Success!".to_string(),
+        Err(e) => format!("Failed: {}", e.to_string()),
+    }
 
     // Then, attempt creation across all the services requested
 
@@ -55,8 +58,8 @@ pub async fn get_user(Path(user_id): Path<Uuid>) {
 
 pub async fn get_users(
     State(state): State<Arc<AppState>>
-) {
-    todo!()
+) -> Json<Vec<User>> {
+    Json(database::get_users(&state.db_pool).await)
 }
 
 pub async fn create_user_service(Path((user_id, service_name)): Path<(Uuid, String)>) {
