@@ -1,3 +1,5 @@
+CREATE DATABASE palm;
+
 \c palm
 
 CREATE TABLE Users (
@@ -37,5 +39,5 @@ CREATE TABLE UserSessions (
     expires_at    TIMESTAMPTZ NOT NULL,
     last_seen     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX ON Idx_UserSessions (user_id);
-CREATE INDEX ON Idx_UserSessions (expires_at);
+CREATE INDEX Idx_UserSessions_UserID ON UserSessions (user_id);
+CREATE INDEX Idx_UserSessions_Expires ON UserSessions (expires_at);

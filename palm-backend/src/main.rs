@@ -11,13 +11,14 @@ async fn main() {
     //  - PUT is idempotent (same result each time it is requested)
     //  - POST is not. It may fail if it is called a second time with the same info to prevent duplication.
     let app = Router::new()
-        .route("/healthcheck", get(|| async { "Feeling good!" }))
+        .route("/healthcheck", get(|| async { "Feeling good!\n" }))
         // Authentication
         // .route("/api/auth/login", post(route::create_user))
         // .route("/api/auth/logout", post(route::create_user))
         // User management
         // Create a user
         .route("/api/user/create", post(route::create_user))
+        .route("/api/users", get(route::get_users))
         // Update palm user info, sync across all services when possible
         .route("/api/user/{user_id}", put(route::update_user))
         // Get user info

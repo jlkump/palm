@@ -53,6 +53,12 @@ pub async fn get_user(Path(user_id): Path<Uuid>) {
     todo!()
 }
 
+pub async fn get_users(
+    State(state): State<Arc<AppState>>
+) {
+    todo!()
+}
+
 pub async fn create_user_service(Path((user_id, service_name)): Path<(Uuid, String)>) {
     todo!()
 }

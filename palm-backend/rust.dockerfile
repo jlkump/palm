@@ -4,12 +4,12 @@ WORKDIR /app
 
 COPY . .
 
-RUN cargo build --release
+RUN cargo build
 
 FROM debian:latest
 
 WORKDIR /usr/local/bin
 
-COPY --from=builder /app/target/release/palm-backend .
+COPY --from=builder /app/target/debug/palm-backend .
 
 CMD ["./palm-backend"]
